@@ -27,38 +27,16 @@ public final class SessionAuthenticationConstants {
     public static final String SERVICE_FACTORYPID_SESSION_AUTHENTICATION =
             "org.everit.osgi.authentication.http.session.SessionAuthentication";
 
-    public static final String PROP_FILTER_NAME = "filterName";
-
-    public static final String PROP_RANKING = "ranking";
-
-    public static final String PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID =
-            "session.attr.name.authenticated.resource.id";
-
-    public static final String PROP_AUTHENTICATION_CONTEXT = "authenticationContext.target";
-
     public static final String PROP_AUTHENTICATION_PROPAGATOR = "authenticationPropagator.target";
 
     public static final String PROP_LOG_SERVICE = "logService.target";
 
-    /**
-     * The default value of the {@link #PROP_FILTER_NAME}.
-     */
-    public static final String DEFAULT_FILTER_NAME = "SessionAuthenticationFilter";
+    public static final String PROP_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL = "session.logout.servlet.success.logout.url";
 
-    /**
-     * The default value of the {@link org.apache.felix.http.whiteboard.HttpWhiteboardConstants#PATTERN}.
-     */
-    public static final String DEFAULT_PATTERN = "/.*";
+    public static final String DEFAULT_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL = "/logout.html";
 
-    /**
-     * The default value of the {@link org.apache.felix.http.whiteboard.HttpWhiteboardConstants#CONTEXT_ID}.
-     */
-    public static final String DEFAULT_CONTEXT_ID = "defaultContext";
-
-    /**
-     * The default value of the {@link #PROP_RANKING}.
-     */
-    public static final String DEFAULT_RANKING = "0";
+    public static final String PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID =
+            "session.attr.name.authenticated.resource.id";
 
     public static final String DEFAULT_SESSION_PARAM_NAME_AUTHENTICATED_RESOURCE_ID = "authenticated.resource.id";
 

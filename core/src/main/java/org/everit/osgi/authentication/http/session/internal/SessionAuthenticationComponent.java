@@ -16,23 +16,22 @@
  */
 package org.everit.osgi.authentication.http.session.internal;
 
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
 import javax.servlet.Filter;
+import javax.servlet.Servlet;
 
-import org.apache.felix.http.whiteboard.HttpWhiteboardConstants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
-import org.everit.osgi.authentication.context.AuthenticationContext;
+import org.apache.felix.scr.annotations.Service;
 import org.everit.osgi.authentication.context.AuthenticationPropagator;
+import org.everit.osgi.authentication.http.session.AuthenticationSessionAttributeNames;
 import org.everit.osgi.authentication.http.session.SessionAuthenticationConstants;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.annotations.Activate;
@@ -40,26 +39,17 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.log.LogService;
 
 @Component(name = SessionAuthenticationConstants.SERVICE_FACTORYPID_SESSION_AUTHENTICATION, metatype = true,
-        configurationFactory = true, policy = ConfigurationPolicy.REQUIRE)
+        configurationFactory = true, policy = ConfigurationPolicy.REQUIRE, immediate = true)
 @Properties({
-        @Property(name = SessionAuthenticationConstants.PROP_FILTER_NAME,
-                value = SessionAuthenticationConstants.DEFAULT_FILTER_NAME),
-        @Property(name = HttpWhiteboardConstants.PATTERN,
-                value = SessionAuthenticationConstants.DEFAULT_PATTERN),
-        @Property(name = HttpWhiteboardConstants.CONTEXT_ID,
-                value = SessionAuthenticationConstants.DEFAULT_CONTEXT_ID),
-        @Property(name = SessionAuthenticationConstants.PROP_RANKING,
-                value = SessionAuthenticationConstants.DEFAULT_RANKING),
+        @Property(name = SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL,
+                value = SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL),
         @Property(name = SessionAuthenticationConstants.PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID,
                 value = SessionAuthenticationConstants.DEFAULT_SESSION_PARAM_NAME_AUTHENTICATED_RESOURCE_ID),
-        @Property(name = SessionAuthenticationConstants.PROP_AUTHENTICATION_CONTEXT),
         @Property(name = SessionAuthenticationConstants.PROP_AUTHENTICATION_PROPAGATOR),
         @Property(name = SessionAuthenticationConstants.PROP_LOG_SERVICE),
 })
-public class SessionAuthenticationComponent {
-
-    @Reference(bind = "setAuthenticationContext")
-    private AuthenticationContext authenticationContext;
+@Service
+public class SessionAuthenticationComponent implements AuthenticationSessionAttributeNames {
 
     @Reference(bind = "setAuthenticationPropagator")
     private AuthenticationPropagator authenticationPropagator;
@@ -69,30 +59,36 @@ public class SessionAuthenticationComponent {
 
     private ServiceRegistration<Filter> sessionAuthenticationFilterSR;
 
+    private ServiceRegistration<Servlet> sessionLogoutServletSR;
+
+    private String sessionAttrNameAuthenticatedResourceId;
+
     @Activate
     public void activate(final BundleContext context, final Map<String, Object> componentProperties) throws Exception {
-        String sessionAttrNameAuthenticatedResourceId = getStringProperty(componentProperties,
+
+        sessionAttrNameAuthenticatedResourceId = getStringProperty(componentProperties,
                 SessionAuthenticationConstants.PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID);
+        String sessionLogoutServletSuccessLogoutUrl = getStringProperty(componentProperties,
+                SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL);
 
         Filter sessionAuthenticationFilter = new SessionAuthenticationFilter(authenticationPropagator,
-                authenticationContext, sessionAttrNameAuthenticatedResourceId, logService);
+                sessionAttrNameAuthenticatedResourceId, logService);
 
-        String filterName =
-                getStringProperty(componentProperties, SessionAuthenticationConstants.PROP_FILTER_NAME);
-        String pattern =
-                getStringProperty(componentProperties, HttpWhiteboardConstants.PATTERN);
-        String contextId =
-                getStringProperty(componentProperties, HttpWhiteboardConstants.CONTEXT_ID);
-        Long ranking =
-                Long.valueOf(getStringProperty(componentProperties, SessionAuthenticationConstants.PROP_RANKING));
+        Hashtable<String, Object> properties = new Hashtable<>();
+        properties.putAll(componentProperties);
 
-        Dictionary<String, Object> filterProperties = new Hashtable<>();
-        filterProperties.put(SessionAuthenticationConstants.PROP_FILTER_NAME, filterName);
-        filterProperties.put(HttpWhiteboardConstants.PATTERN, pattern);
-        filterProperties.put(HttpWhiteboardConstants.CONTEXT_ID, contextId);
-        filterProperties.put(Constants.SERVICE_RANKING, ranking);
-        sessionAuthenticationFilterSR =
-                context.registerService(Filter.class, sessionAuthenticationFilter, filterProperties);
+        sessionAuthenticationFilterSR = context.registerService(
+                Filter.class, sessionAuthenticationFilter, properties);
+
+        Servlet sessionLogoutServlet = new SessionLogoutServlet(sessionLogoutServletSuccessLogoutUrl);
+
+        sessionLogoutServletSR = context.registerService(
+                Servlet.class, sessionLogoutServlet, properties);
+    }
+
+    @Override
+    public String authenticatedResourceId() {
+        return sessionAttrNameAuthenticatedResourceId;
     }
 
     @Deactivate
@@ -100,6 +96,10 @@ public class SessionAuthenticationComponent {
         if (sessionAuthenticationFilterSR != null) {
             sessionAuthenticationFilterSR.unregister();
             sessionAuthenticationFilterSR = null;
+        }
+        if (sessionLogoutServletSR != null) {
+            sessionLogoutServletSR.unregister();
+            sessionLogoutServletSR = null;
         }
     }
 
@@ -110,10 +110,6 @@ public class SessionAuthenticationComponent {
             throw new ConfigurationException(propertyName, "property not defined");
         }
         return String.valueOf(value);
-    }
-
-    public void setAuthenticationContext(final AuthenticationContext authenticationContext) {
-        this.authenticationContext = authenticationContext;
     }
 
     public void setAuthenticationPropagator(final AuthenticationPropagator authenticationPropagator) {

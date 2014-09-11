@@ -27,26 +27,33 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.everit.osgi.authentication.context.AuthenticationContext;
 import org.everit.osgi.authentication.context.AuthenticationPropagator;
+import org.everit.osgi.authentication.http.session.AuthenticationSessionAttributeNames;
 import org.osgi.service.log.LogService;
 
+/**
+ * Checks the {@link HttpSession} for an Authenticated Resource ID by the attribute name provided by the
+ * {@link AuthenticationSessionAttributeNames}.
+ *
+ * If there is a <code>non-null</code> value assigned to this attribute name, executes the authenticated process in the
+ * name of the Authenticated Resource. This means it invokes further the filter chain via an
+ * {@link AuthenticationPropagator}.
+ *
+ * If there is no Authenticated Resource ID available in the session, the filter chain will be processed further without
+ * any special extension.
+ */
 public class SessionAuthenticationFilter implements Filter {
 
     private final AuthenticationPropagator authenticationPropagator;
-
-    private final AuthenticationContext authenticationContext;
 
     private final String sessionAttrNameAuthenticatedResourceId;
 
     private final LogService logService;
 
     public SessionAuthenticationFilter(final AuthenticationPropagator authenticationPropagator,
-            final AuthenticationContext authenticationContext, final String sessionAttrNameAuthenticatedResourceId,
-            final LogService logService) {
+            final String sessionAttrNameAuthenticatedResourceId, final LogService logService) {
         super();
         this.authenticationPropagator = authenticationPropagator;
-        this.authenticationContext = authenticationContext;
         this.sessionAttrNameAuthenticatedResourceId = sessionAttrNameAuthenticatedResourceId;
         this.logService = logService;
     }
@@ -59,17 +66,24 @@ public class SessionAuthenticationFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
-        // Check the session for Resource ID and use the Default Resource ID if not assigned yet to the session
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpSession httpSession = httpServletRequest.getSession();
+        HttpSession httpSession = httpServletRequest.getSession(false);
 
-        Long authenticatedResourceId = (Long) httpSession.getAttribute(sessionAttrNameAuthenticatedResourceId);
-        if (authenticatedResourceId == null) {
-            authenticatedResourceId = authenticationContext.getDefaultResourceId();
-            httpSession.setAttribute(sessionAttrNameAuthenticatedResourceId, authenticatedResourceId);
+        Long authenticatedResourceId = httpSession == null
+                ? null
+                : (Long) httpSession.getAttribute(sessionAttrNameAuthenticatedResourceId);
+
+        if (authenticatedResourceId != null) {
+            doFilterAsAuthenticatedResource(request, response, chain, authenticatedResourceId);
+        } else {
+            doFilterAsDefaultResource(request, response, chain);
         }
 
-        // Execute authenticated process
+    }
+
+    private void doFilterAsAuthenticatedResource(final ServletRequest request, final ServletResponse response,
+            final FilterChain chain, final Long authenticatedResourceId)
+            throws IOException, ServletException {
         Exception exception = authenticationPropagator.runAs(authenticatedResourceId, () -> {
             try {
                 chain.doFilter(request, response);
@@ -86,7 +100,11 @@ public class SessionAuthenticationFilter implements Filter {
                 throw (ServletException) exception;
             }
         }
+    }
 
+    private void doFilterAsDefaultResource(final ServletRequest request, final ServletResponse response,
+            final FilterChain chain) throws IOException, ServletException {
+        chain.doFilter(request, response);
     }
 
     @Override

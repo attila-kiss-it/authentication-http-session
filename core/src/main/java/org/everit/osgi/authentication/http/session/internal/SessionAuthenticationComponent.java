@@ -44,7 +44,7 @@ import org.osgi.service.log.LogService;
         @Property(name = SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL,
                 value = SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL),
         @Property(name = SessionAuthenticationConstants.PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID,
-                value = SessionAuthenticationConstants.DEFAULT_SESSION_PARAM_NAME_AUTHENTICATED_RESOURCE_ID),
+                value = SessionAuthenticationConstants.DEFAULT_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID),
         @Property(name = SessionAuthenticationConstants.PROP_AUTHENTICATION_PROPAGATOR),
         @Property(name = SessionAuthenticationConstants.PROP_LOG_SERVICE),
 })

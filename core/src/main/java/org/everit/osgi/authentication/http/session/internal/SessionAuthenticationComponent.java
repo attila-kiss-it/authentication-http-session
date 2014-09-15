@@ -80,7 +80,7 @@ public class SessionAuthenticationComponent implements AuthenticationSessionAttr
         sessionAuthenticationFilterSR = context.registerService(
                 Filter.class, sessionAuthenticationFilter, properties);
 
-        Servlet sessionLogoutServlet = new SessionLogoutServlet(sessionLogoutServletSuccessLogoutUrl);
+        Servlet sessionLogoutServlet = new SessionLogoutServlet(sessionLogoutServletSuccessLogoutUrl, logService);
 
         sessionLogoutServletSR = context.registerService(
                 Servlet.class, sessionLogoutServlet, properties);

@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.osgi.service.log.LogService;
+
 /**
  * Invalidates the {@link HttpSession} of the request and redirects to a specified location.
  */
@@ -33,13 +35,16 @@ public class SessionLogoutServlet extends HttpServlet {
 
     private final String successLogoutUrl;
 
-    public SessionLogoutServlet(final String successLogoutUrl) {
+    private final LogService logService;
+
+    public SessionLogoutServlet(final String successLogoutUrl, final LogService logService) {
         super();
         if ((successLogoutUrl != null) && !successLogoutUrl.trim().isEmpty()) {
             this.successLogoutUrl = successLogoutUrl;
         } else {
             this.successLogoutUrl = null;
         }
+        this.logService = logService;
     }
 
     @Override
@@ -54,11 +59,19 @@ public class SessionLogoutServlet extends HttpServlet {
         logout(req, resp);
     }
 
-    private void logout(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
+    private void invalidateSession(final HttpServletRequest req) {
         HttpSession httpSession = req.getSession(false);
         if (httpSession != null) {
-            httpSession.invalidate();
+            try {
+                httpSession.invalidate();
+            } catch (IllegalStateException e) {
+                logService.log(LogService.LOG_DEBUG, e.getMessage(), e);
+            }
         }
+    }
+
+    private void logout(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
+        invalidateSession(req);
         if (successLogoutUrl != null) {
             resp.sendRedirect(successLogoutUrl);
         }

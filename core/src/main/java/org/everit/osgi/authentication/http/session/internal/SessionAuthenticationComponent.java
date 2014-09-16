@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.log.LogService;
 
 @Component(name = SessionAuthenticationConstants.SERVICE_FACTORYPID_SESSION_AUTHENTICATION, metatype = true,
-        configurationFactory = true, policy = ConfigurationPolicy.REQUIRE)
+        configurationFactory = true, policy = ConfigurationPolicy.REQUIRE, immediate = true)
 @Properties({
         @Property(name = SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL,
                 value = SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL),

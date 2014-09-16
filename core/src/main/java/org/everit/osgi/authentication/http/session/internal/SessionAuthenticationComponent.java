@@ -39,10 +39,12 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.log.LogService;
 
 @Component(name = SessionAuthenticationConstants.SERVICE_FACTORYPID_SESSION_AUTHENTICATION, metatype = true,
-        configurationFactory = true, policy = ConfigurationPolicy.REQUIRE, immediate = true)
+        configurationFactory = true, policy = ConfigurationPolicy.REQUIRE)
 @Properties({
-        @Property(name = SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL,
-                value = SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL),
+        @Property(name = SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL,
+                value = SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL),
+        @Property(name = SessionAuthenticationConstants.PROP_REQ_PARAM_NAME_LOGGED_OUT_URL,
+                value = SessionAuthenticationConstants.DEFAULT_REQ_PARAM_NAME_LOGGED_OUT_URL),
         @Property(name = SessionAuthenticationConstants.PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID,
                 value = SessionAuthenticationConstants.DEFAULT_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID),
         @Property(name = SessionAuthenticationConstants.PROP_AUTHENTICATION_PROPAGATOR),
@@ -68,8 +70,10 @@ public class SessionAuthenticationComponent implements AuthenticationSessionAttr
 
         sessionAttrNameAuthenticatedResourceId = getStringProperty(componentProperties,
                 SessionAuthenticationConstants.PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID);
-        String sessionLogoutServletSuccessLogoutUrl = getStringProperty(componentProperties,
-                SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL);
+        String loggedOutUrl = getStringProperty(componentProperties,
+                SessionAuthenticationConstants.PROP_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL);
+        String reqParamNameLoggedOutUrl = getStringProperty(componentProperties,
+                SessionAuthenticationConstants.PROP_REQ_PARAM_NAME_LOGGED_OUT_URL);
 
         Filter sessionAuthenticationFilter = new SessionAuthenticationFilter(authenticationPropagator,
                 sessionAttrNameAuthenticatedResourceId, logService);
@@ -80,7 +84,7 @@ public class SessionAuthenticationComponent implements AuthenticationSessionAttr
         sessionAuthenticationFilterSR = context.registerService(
                 Filter.class, sessionAuthenticationFilter, properties);
 
-        Servlet sessionLogoutServlet = new SessionLogoutServlet(sessionLogoutServletSuccessLogoutUrl, logService);
+        Servlet sessionLogoutServlet = new SessionLogoutServlet(reqParamNameLoggedOutUrl, loggedOutUrl, logService);
 
         sessionLogoutServletSR = context.registerService(
                 Servlet.class, sessionLogoutServlet, properties);

@@ -94,7 +94,7 @@ public class SessionAuthenticationTestComponent {
 
     private String logoutUrl;
 
-    private String successLogoutUrl;
+    private String loggedOutUrl;
 
     private Server testServer;
 
@@ -119,8 +119,7 @@ public class SessionAuthenticationTestComponent {
 
         helloUrl = testServerURL + HELLO_SERVLET_ALIAS;
         logoutUrl = testServerURL + LOGOUT_SERVLET_ALIAS;
-        successLogoutUrl = testServerURL
-                + SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_SUCCESS_LOGOUT_URL;
+        loggedOutUrl = testServerURL + SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL;
     }
 
     @Deactivate
@@ -159,7 +158,7 @@ public class SessionAuthenticationTestComponent {
         String currentUrl = (currentReq.getURI().isAbsolute())
                 ? currentReq.getURI().toString()
                 : (currentHost.toURI() + currentReq.getURI());
-        Assert.assertEquals(successLogoutUrl, currentUrl);
+        Assert.assertEquals(loggedOutUrl, currentUrl);
     }
 
     private void logoutPost(final HttpContext httpContext) throws ClientProtocolException, IOException {
@@ -168,7 +167,7 @@ public class SessionAuthenticationTestComponent {
         HttpResponse httpResponse = httpClient.execute(httpPost, httpContext);
         Assert.assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, httpResponse.getStatusLine().getStatusCode());
         Header locationHeader = httpResponse.getFirstHeader("Location");
-        Assert.assertEquals(successLogoutUrl, locationHeader.getValue());
+        Assert.assertEquals(loggedOutUrl, locationHeader.getValue());
     }
 
     public void setAuthenticationContext(final AuthenticationContext authenticationContext) {

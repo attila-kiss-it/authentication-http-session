@@ -17,6 +17,7 @@
 package org.everit.osgi.authentication.http.session.internal;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,17 +34,28 @@ public class SessionLogoutServlet extends HttpServlet {
 
     private static final long serialVersionUID = -3935910461013610805L;
 
-    private final String successLogoutUrl;
+    private final String loggedOutUrl;
+
+    private final String reqParamNameLoggedOutUrl;
 
     private final LogService logService;
 
-    public SessionLogoutServlet(final String successLogoutUrl, final LogService logService) {
+    public SessionLogoutServlet(final String reqParamNameLoggedOutUrl, final String loggedOutUrl,
+            final LogService logService) {
         super();
-        if ((successLogoutUrl != null) && !successLogoutUrl.trim().isEmpty()) {
-            this.successLogoutUrl = successLogoutUrl;
-        } else {
-            this.successLogoutUrl = null;
+        Objects.requireNonNull(reqParamNameLoggedOutUrl, "reqParamNameLoggedOutUrl cannot be null");
+        Objects.requireNonNull(loggedOutUrl, "loggedOutUrl cannot be null");
+
+        this.reqParamNameLoggedOutUrl = reqParamNameLoggedOutUrl.trim();
+        if (this.reqParamNameLoggedOutUrl.isEmpty()) {
+            throw new IllegalArgumentException("reqParamNameLoggedOutUrl cannot be blank");
         }
+
+        this.loggedOutUrl = loggedOutUrl.trim();
+        if (this.loggedOutUrl.isEmpty()) {
+            throw new IllegalArgumentException("loggedOutUrl cannot be blank");
+        }
+
         this.logService = logService;
     }
 
@@ -71,9 +83,14 @@ public class SessionLogoutServlet extends HttpServlet {
     }
 
     private void logout(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
+
         invalidateSession(req);
-        if (successLogoutUrl != null) {
-            resp.sendRedirect(successLogoutUrl);
+
+        String reqLoggedOutUrl = req.getParameter(reqParamNameLoggedOutUrl);
+        if (reqLoggedOutUrl != null) {
+            resp.sendRedirect(reqLoggedOutUrl);
+        } else {
+            resp.sendRedirect(loggedOutUrl);
         }
     }
 

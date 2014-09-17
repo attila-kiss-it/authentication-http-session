@@ -18,6 +18,7 @@ package org.everit.osgi.authentication.http.session.internal;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -72,14 +73,14 @@ public class SessionLogoutServlet extends HttpServlet {
     }
 
     private void invalidateSession(final HttpServletRequest req) {
-        HttpSession httpSession = req.getSession(false);
-        if (httpSession != null) {
-            try {
-                httpSession.invalidate();
-            } catch (IllegalStateException e) {
-                logService.log(LogService.LOG_DEBUG, e.getMessage(), e);
-            }
-        }
+        Optional.ofNullable(req.getSession(false))
+                .ifPresent((httpSession) -> {
+                    try {
+                        httpSession.invalidate();
+                    } catch (IllegalStateException e) {
+                        logService.log(LogService.LOG_DEBUG, e.getMessage(), e);
+                    }
+                });
     }
 
     private void logout(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {

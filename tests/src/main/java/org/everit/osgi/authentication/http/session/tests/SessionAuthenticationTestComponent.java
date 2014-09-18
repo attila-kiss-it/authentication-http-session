@@ -119,7 +119,7 @@ public class SessionAuthenticationTestComponent {
 
         helloUrl = testServerURL + HELLO_SERVLET_ALIAS;
         logoutUrl = testServerURL + LOGOUT_SERVLET_ALIAS;
-        loggedOutUrl = testServerURL + SessionAuthenticationConstants.DEFAULT_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL;
+        loggedOutUrl = testServerURL + SessionAuthenticationConstants.DEFAULT_LOGGED_OUT_URL;
     }
 
     @Deactivate

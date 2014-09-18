@@ -31,9 +31,9 @@ public final class SessionAuthenticationConstants {
 
     public static final String PROP_LOG_SERVICE = "logService.target";
 
-    public static final String PROP_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL = "session.logout.servlet.logged.out.url";
+    public static final String PROP_LOGGED_OUT_URL = "logged.out.url";
 
-    public static final String DEFAULT_SESSION_LOGOUT_SERVLET_LOGGED_OUT_URL = "/logged-out.html";
+    public static final String DEFAULT_LOGGED_OUT_URL = "/logged-out.html";
 
     public static final String PROP_REQ_PARAM_NAME_LOGGED_OUT_URL = "req.param.name.logged.out.url";
 

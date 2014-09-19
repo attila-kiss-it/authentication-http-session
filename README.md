@@ -38,6 +38,8 @@ three OSGi services:
 
 #Concept
 Full authentication concept is available on blog post [Everit Authentication][2].
+Implemented components based on this concept are listed [here][3].
 
 [1]: https://github.com/everit-org/authentication-context-api
 [2]: http://everitorg.wordpress.com/2014/07/31/everit-authentication/
+[3]: http://everitorg.wordpress.com/2014/07/31/everit-authentication-implemented-and-released-2/

@@ -21,6 +21,8 @@ package org.everit.osgi.authentication.http.session;
  */
 public final class SessionAuthenticationConstants {
 
+    public static final String DEFAULT_SERVICE_DESCRIPTION =
+            "Default Session Authentication Component";
     /**
      * The service factory PID of the Session Authentication component.
      */

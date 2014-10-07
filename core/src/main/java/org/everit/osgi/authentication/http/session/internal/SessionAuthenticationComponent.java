@@ -41,6 +41,7 @@ import org.everit.osgi.authentication.context.AuthenticationPropagator;
 import org.everit.osgi.authentication.http.session.AuthenticationSessionAttributeNames;
 import org.everit.osgi.authentication.http.session.SessionAuthenticationConstants;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.log.LogService;
@@ -66,6 +67,8 @@ import org.osgi.service.log.LogService;
 @Component(name = SessionAuthenticationConstants.SERVICE_FACTORYPID_SESSION_AUTHENTICATION, metatype = true,
         configurationFactory = true, policy = ConfigurationPolicy.REQUIRE, immediate = true)
 @Properties({
+        @Property(name = Constants.SERVICE_DESCRIPTION,
+                value = SessionAuthenticationConstants.DEFAULT_SERVICE_DESCRIPTION),
         @Property(name = SessionAuthenticationConstants.PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID,
                 value = SessionAuthenticationConstants.DEFAULT_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID),
         @Property(name = SessionAuthenticationConstants.PROP_LOGGED_OUT_URL,

@@ -172,6 +172,8 @@ public class SessionAuthenticationComponent
         throw (IOException) exception;
       } else if (exception instanceof ServletException) {
         throw (ServletException) exception;
+      } else if (exception instanceof RuntimeException) {
+        throw (RuntimeException) exception;
       }
     }
   }

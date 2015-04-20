@@ -17,16 +17,16 @@
 package org.everit.osgi.authentication.http.session;
 
 /**
- * Provides the session attribute names stored in and read from the {@link javax.servlet.http.HttpSession} by the
- * authentication components.
+ * Provides the session attribute names stored in and read from the
+ * {@link javax.servlet.http.HttpSession} by the authentication components.
  */
 public interface AuthenticationSessionAttributeNames {
 
-    /**
-     * Returns the session attribute name of the Authenticated Resource ID.
-     *
-     * @return the session attribute name of the Authenticated Resource ID
-     */
-    String authenticatedResourceId();
+  /**
+   * Returns the session attribute name of the Authenticated Resource ID.
+   *
+   * @return the session attribute name of the Authenticated Resource ID
+   */
+  String authenticatedResourceId();
 
 }

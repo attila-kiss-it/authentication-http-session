@@ -37,56 +37,58 @@ import org.everit.osgi.authentication.context.AuthenticationContext;
 import org.everit.osgi.authentication.http.session.AuthenticationSessionAttributeNames;
 
 @Component(name = "HelloWorldServletComponent", metatype = true, configurationFactory = true,
-        policy = ConfigurationPolicy.REQUIRE, immediate = true)
+    policy = ConfigurationPolicy.REQUIRE, immediate = true)
 @Properties({
-        @Property(name = "authenticationSessionAttributeNames.target"),
-        @Property(name = "authenticationContext.target")
+    @Property(name = "authenticationSessionAttributeNames.target"),
+    @Property(name = "authenticationContext.target")
 })
 @Service(value = Servlet.class)
 public class HelloWorldServletComponent extends HttpServlet {
 
-    private static final long serialVersionUID = -5545883781165913751L;
+  private static final long serialVersionUID = -5545883781165913751L;
 
-    @Reference(bind = "setAuthenticationContext")
-    private AuthenticationContext authenticationContext;
+  @Reference(bind = "setAuthenticationContext")
+  private AuthenticationContext authenticationContext;
 
-    @Reference(bind = "setAuthenticationSessionAttributeNames")
-    private AuthenticationSessionAttributeNames authenticationSessionAttributeNames;
+  @Reference(bind = "setAuthenticationSessionAttributeNames")
+  private AuthenticationSessionAttributeNames authenticationSessionAttributeNames;
 
-    @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException,
-            IOException {
-        long currentResourceId = authenticationContext.getCurrentResourceId();
-        StringBuilder sb = null;
-        if (currentResourceId == 1) {
-            sb = new StringBuilder();
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            for (StackTraceElement stackTraceElement : stackTrace) {
-                sb.append("\tat ").append(stackTraceElement).append("\n");
-            }
-        }
-
-        HttpSession httpSession = req.getSession();
-        long newResourceId = new Random().nextLong();
-        httpSession.setAttribute(authenticationSessionAttributeNames.authenticatedResourceId(), newResourceId);
-
-        resp.setContentType("text/plain");
-        PrintWriter out = resp.getWriter();
-        out.print(currentResourceId + ":" + newResourceId);
-        if (sb != null) {
-            out.print(":\n === Server stackrace for analizing Filter chain and Servlet invocations ===\n"
-                    + sb.toString().replaceAll(":", "-->")
-                    + " === Server stacktrace END ===\n");
-        }
+  @Override
+  protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+      throws ServletException,
+      IOException {
+    long currentResourceId = authenticationContext.getCurrentResourceId();
+    StringBuilder sb = null;
+    if (currentResourceId == 1) {
+      sb = new StringBuilder();
+      StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+      for (StackTraceElement stackTraceElement : stackTrace) {
+        sb.append("\tat ").append(stackTraceElement).append("\n");
+      }
     }
 
-    public void setAuthenticationContext(final AuthenticationContext authenticationContext) {
-        this.authenticationContext = authenticationContext;
-    }
+    HttpSession httpSession = req.getSession();
+    long newResourceId = new Random().nextLong();
+    httpSession.setAttribute(authenticationSessionAttributeNames.authenticatedResourceId(),
+        newResourceId);
 
-    public void setAuthenticationSessionAttributeNames(
-            final AuthenticationSessionAttributeNames authenticationSessionAttributeNames) {
-        this.authenticationSessionAttributeNames = authenticationSessionAttributeNames;
+    resp.setContentType("text/plain");
+    PrintWriter out = resp.getWriter();
+    out.print(currentResourceId + ":" + newResourceId);
+    if (sb != null) {
+      out.print(":\n === Server stackrace for analizing Filter chain and Servlet invocations ===\n"
+          + sb.toString().replaceAll(":", "-->")
+          + " === Server stacktrace END ===\n");
     }
+  }
+
+  public void setAuthenticationContext(final AuthenticationContext authenticationContext) {
+    this.authenticationContext = authenticationContext;
+  }
+
+  public void setAuthenticationSessionAttributeNames(
+      final AuthenticationSessionAttributeNames authenticationSessionAttributeNames) {
+    this.authenticationSessionAttributeNames = authenticationSessionAttributeNames;
+  }
 
 }

@@ -142,8 +142,8 @@ public class SessionAuthenticationTestComponent {
     StringWriter writer = new StringWriter();
     IOUtils.copy(inputStream, writer);
     String[] responseBodyAsString = writer.toString().split(":");
-    long actualResourceId = Long.valueOf(responseBodyAsString[0]).longValue();
-    long newResourceId = Long.valueOf(responseBodyAsString[1]).longValue();
+    long actualResourceId = Long.parseLong(responseBodyAsString[0]);
+    long newResourceId = Long.parseLong(responseBodyAsString[1]);
     String st = responseBodyAsString.length == 3 ? responseBodyAsString[2] : "should be success";
     Assert.assertEquals(st.replaceAll("-->", ":"), expectedResourceId, actualResourceId);
     return newResourceId;
@@ -205,7 +205,7 @@ public class SessionAuthenticationTestComponent {
 
     sessionResourceId = hello(httpContext, authenticationContext.getDefaultResourceId());
     sessionResourceId = hello(httpContext, sessionResourceId);
-    sessionResourceId = hello(httpContext, sessionResourceId);
+    hello(httpContext, sessionResourceId);
     logoutGet(httpContext);
 
     hello(httpContext, authenticationContext.getDefaultResourceId());

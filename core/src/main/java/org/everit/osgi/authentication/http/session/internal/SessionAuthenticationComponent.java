@@ -17,6 +17,7 @@ package org.everit.osgi.authentication.http.session.internal;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -225,7 +226,7 @@ public class SessionAuthenticationComponent
 
     String reqLoggedOutUrl = req.getParameter(reqParamNameLoggedOutUrl);
     if (reqLoggedOutUrl != null) {
-      resp.sendRedirect(URLEncoder.encode(reqLoggedOutUrl, "UTF-8"));
+      resp.sendRedirect(URLEncoder.encode(reqLoggedOutUrl, StandardCharsets.UTF_8.displayName()));
     } else {
       resp.sendRedirect(loggedOutUrl);
     }
@@ -234,15 +235,12 @@ public class SessionAuthenticationComponent
   @Override
   public void service(final ServletRequest req, final ServletResponse res) throws ServletException,
       IOException {
-    HttpServletRequest request;
-    HttpServletResponse response;
-
     if (!((req instanceof HttpServletRequest) && (res instanceof HttpServletResponse))) {
       throw new ServletException("non-HTTP request or response");
     }
 
-    request = (HttpServletRequest) req;
-    response = (HttpServletResponse) res;
+    HttpServletRequest request = (HttpServletRequest) req;
+    HttpServletResponse response = (HttpServletResponse) res;
 
     logout(request, response);
   }

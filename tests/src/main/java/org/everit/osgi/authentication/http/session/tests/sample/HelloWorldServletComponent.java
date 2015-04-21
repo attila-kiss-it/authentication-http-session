@@ -104,15 +104,13 @@ public class HelloWorldServletComponent implements Servlet {
   @Override
   public void service(final ServletRequest req, final ServletResponse res) throws ServletException,
       IOException {
-    HttpServletRequest request;
-    HttpServletResponse response;
 
     if (!((req instanceof HttpServletRequest) && (res instanceof HttpServletResponse))) {
       throw new ServletException("non-HTTP request or response");
     }
 
-    request = (HttpServletRequest) req;
-    response = (HttpServletResponse) res;
+    HttpServletRequest request = (HttpServletRequest) req;
+    HttpServletResponse response = (HttpServletResponse) res;
 
     doGet(request, response);
   }

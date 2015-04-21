@@ -16,18 +16,16 @@
 package org.everit.osgi.authentication.http.session.internal;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -83,7 +81,10 @@ import org.osgi.service.log.LogService;
 })
 @Service
 public class SessionAuthenticationComponent
-    implements Filter, AuthenticationSessionAttributeNames, Servlet {
+    extends HttpServlet
+    implements Filter, AuthenticationSessionAttributeNames {
+
+  private static final long serialVersionUID = 5302724920732803866L;
 
   @Reference(bind = "setAuthenticationPropagator")
   private AuthenticationPropagator authenticationPropagator;
@@ -96,8 +97,6 @@ public class SessionAuthenticationComponent
   private String reqParamNameLoggedOutUrl;
 
   private String sessionAttrNameAuthenticatedResourceId;
-
-  private ServletConfig config;
 
   @Activate
   public void activate(final BundleContext context, final Map<String, Object> componentProperties)
@@ -172,8 +171,6 @@ public class SessionAuthenticationComponent
         throw (IOException) exception;
       } else if (exception instanceof ServletException) {
         throw (ServletException) exception;
-      } else if (exception instanceof RuntimeException) {
-        throw (RuntimeException) exception;
       }
     }
   }
@@ -185,13 +182,16 @@ public class SessionAuthenticationComponent
   }
 
   @Override
-  public ServletConfig getServletConfig() {
-    return config;
+  protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+      throws ServletException,
+      IOException {
+    logout(req, resp);
   }
 
   @Override
-  public String getServletInfo() {
-    return "";
+  protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
+      throws ServletException, IOException {
+    logout(req, resp);
   }
 
   private String getStringProperty(final Map<String, Object> componentProperties,
@@ -208,11 +208,6 @@ public class SessionAuthenticationComponent
   public void init(final FilterConfig filterConfig) throws ServletException {
   }
 
-  @Override
-  public void init(final ServletConfig pConfig) throws ServletException {
-    config = pConfig;
-  }
-
   private void logout(final HttpServletRequest req, final HttpServletResponse resp)
       throws IOException {
 
@@ -227,26 +222,10 @@ public class SessionAuthenticationComponent
 
     String reqLoggedOutUrl = req.getParameter(reqParamNameLoggedOutUrl);
     if (reqLoggedOutUrl != null) {
-      resp.sendRedirect(URLEncoder.encode(reqLoggedOutUrl, "UTF-8"));
+      resp.sendRedirect(reqLoggedOutUrl);
     } else {
       resp.sendRedirect(loggedOutUrl);
     }
-  }
-
-  @Override
-  public void service(final ServletRequest req, final ServletResponse res) throws ServletException,
-      IOException {
-    HttpServletRequest request;
-    HttpServletResponse response;
-
-    if (!((req instanceof HttpServletRequest) && (res instanceof HttpServletResponse))) {
-      throw new ServletException("non-HTTP request or response");
-    }
-
-    request = (HttpServletRequest) req;
-    response = (HttpServletResponse) res;
-
-    logout(request, response);
   }
 
   public void setAuthenticationPropagator(final AuthenticationPropagator authenticationPropagator) {

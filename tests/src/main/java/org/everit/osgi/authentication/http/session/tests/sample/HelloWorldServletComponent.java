@@ -20,10 +20,8 @@ import java.io.PrintWriter;
 import java.util.Random;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,10 +42,9 @@ import org.everit.osgi.authentication.http.session.AuthenticationSessionAttribut
     @Property(name = "authenticationContext.target")
 })
 @Service(value = Servlet.class)
-public class HelloWorldServletComponent implements Servlet {
+public class HelloWorldServletComponent extends HttpServlet {
 
-
-  private ServletConfig config;
+  private static final long serialVersionUID = -5545883781165913751L;
 
   @Reference(bind = "setAuthenticationContext")
   private AuthenticationContext authenticationContext;
@@ -56,11 +53,9 @@ public class HelloWorldServletComponent implements Servlet {
   private AuthenticationSessionAttributeNames authenticationSessionAttributeNames;
 
   @Override
-  public void destroy() {
-  }
-
-  private void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-      throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+      throws ServletException,
+      IOException {
     long currentResourceId = authenticationContext.getCurrentResourceId();
     StringBuilder sb = null;
     if (currentResourceId == 1) {
@@ -85,37 +80,6 @@ public class HelloWorldServletComponent implements Servlet {
           + sb.toString().replaceAll(":", "-->")
           + " === Server stacktrace END ===\n");
     }
-  }
-
-  @Override
-  public ServletConfig getServletConfig() {
-    return config;
-  }
-
-  @Override
-  public String getServletInfo() {
-    return "";
-  }
-
-  @Override
-  public void init(final ServletConfig pConfig) throws ServletException {
-    config = pConfig;
-  }
-
-  @Override
-  public void service(final ServletRequest req, final ServletResponse res) throws ServletException,
-      IOException {
-    HttpServletRequest request;
-    HttpServletResponse response;
-
-    if (!((req instanceof HttpServletRequest) && (res instanceof HttpServletResponse))) {
-      throw new ServletException("non-HTTP request or response");
-    }
-
-    request = (HttpServletRequest) req;
-    response = (HttpServletResponse) res;
-
-    doGet(request, response);
   }
 
   public void setAuthenticationContext(final AuthenticationContext authenticationContext) {

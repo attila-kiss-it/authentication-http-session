@@ -67,8 +67,7 @@ public class HelloWorldServletComponent extends HttpServlet {
     }
 
     HttpSession httpSession = req.getSession();
-    Random random = new Random();
-    long newResourceId = random.nextLong();
+    long newResourceId = new Random().nextLong();
     httpSession.setAttribute(authenticationSessionAttributeNames.authenticatedResourceId(),
         newResourceId);
 

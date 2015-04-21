@@ -1,17 +1,18 @@
-/*
- * Copyright (C) 2011 Everit Kft. (http://www.everit.biz)
+/**
+ * This file is part of Everit - HTTP Session based authentication.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Everit - HTTP Session based authentication is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * Everit - HTTP Session based authentication is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Everit - HTTP Session based authentication.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.everit.osgi.authentication.http.session;
 
@@ -20,32 +21,32 @@ package org.everit.osgi.authentication.http.session;
  */
 public final class SessionAuthenticationConstants {
 
-  public static final String DEFAULT_SERVICE_DESCRIPTION =
-      "Default Session Authentication Component";
-  /**
-   * The service factory PID of the Session Authentication component.
-   */
-  public static final String SERVICE_FACTORYPID_SESSION_AUTHENTICATION =
-      "org.everit.osgi.authentication.http.session.SessionAuthentication";
+    public static final String DEFAULT_SERVICE_DESCRIPTION =
+            "Default Session Authentication Component";
+    /**
+     * The service factory PID of the Session Authentication component.
+     */
+    public static final String SERVICE_FACTORYPID_SESSION_AUTHENTICATION =
+            "org.everit.osgi.authentication.http.session.SessionAuthentication";
 
-  public static final String PROP_AUTHENTICATION_PROPAGATOR = "authenticationPropagator.target";
+    public static final String PROP_AUTHENTICATION_PROPAGATOR = "authenticationPropagator.target";
 
-  public static final String PROP_LOG_SERVICE = "logService.target";
+    public static final String PROP_LOG_SERVICE = "logService.target";
 
-  public static final String PROP_LOGGED_OUT_URL = "logged.out.url";
+    public static final String PROP_LOGGED_OUT_URL = "logged.out.url";
 
-  public static final String DEFAULT_LOGGED_OUT_URL = "/logged-out.html";
+    public static final String DEFAULT_LOGGED_OUT_URL = "/logged-out.html";
 
-  public static final String PROP_REQ_PARAM_NAME_LOGGED_OUT_URL = "req.param.name.logged.out.url";
+    public static final String PROP_REQ_PARAM_NAME_LOGGED_OUT_URL = "req.param.name.logged.out.url";
 
-  public static final String DEFAULT_REQ_PARAM_NAME_LOGGED_OUT_URL = "loggedOutUrl";
+    public static final String DEFAULT_REQ_PARAM_NAME_LOGGED_OUT_URL = "loggedOutUrl";
 
-  public static final String PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID =
-      "session.attr.name.authenticated.resource.id";
+    public static final String PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID =
+            "session.attr.name.authenticated.resource.id";
 
-  public static final String DEFAULT_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID = "authenticated.resource.id";
+    public static final String DEFAULT_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID = "authenticated.resource.id";
 
-  private SessionAuthenticationConstants() {
-  }
+    private SessionAuthenticationConstants() {
+    }
 
 }

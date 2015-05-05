@@ -100,6 +100,9 @@ public class SessionAuthenticationComponent
 
   private ServletConfig config;
 
+  /**
+   * Activate method of component.
+   */
   @Activate
   public void activate(final BundleContext context, final Map<String, Object> componentProperties)
       throws Exception {

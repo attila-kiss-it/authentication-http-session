@@ -43,7 +43,8 @@ public final class SessionAuthenticationConstants {
   public static final String PROP_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID =
       "session.attr.name.authenticated.resource.id";
 
-  public static final String DEFAULT_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID = "authenticated.resource.id";
+  public static final String DEFAULT_SESSION_ATTR_NAME_AUTHENTICATED_RESOURCE_ID =
+      "authenticated.resource.id";
 
   private SessionAuthenticationConstants() {
   }

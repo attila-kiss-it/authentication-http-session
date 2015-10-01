@@ -105,7 +105,7 @@
     <dependency>
       <groupId>org.everit.authentication</groupId>
       <artifactId>org.everit.authentication.context.api</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

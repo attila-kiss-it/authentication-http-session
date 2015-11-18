@@ -1,4 +1,4 @@
 authentication-http-session
 ===========================
 
-Documentation: http://wwww.everit.org/authentication-http-session
+Documentation: http://www.everit.org/authentication-http-session
